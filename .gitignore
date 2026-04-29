@@ -1,0 +1,27 @@
+### Eclipse ###
+.settings/
+.classpath
+.project
+.metadata/
+bin/
+
+### VS Code ###
+.vscode/
+
+### Java/Gradle ###
+build/
+.gradle/
+target/
+*.class
+
+### Node/React ###
+node_modules/
+dist/
+.env
+.eslintcache
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+##
