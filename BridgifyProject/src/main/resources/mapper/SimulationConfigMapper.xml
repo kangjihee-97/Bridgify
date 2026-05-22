@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.cloud.mapper.SimulationConfigMapper">
+
+    <insert id="insertConfig"
+            parameterType="org.cloud.domain.entity.SimulationConfig"
+            useGeneratedKeys="true"
+            keyProperty="configId">
+
+        INSERT INTO simulation_config (
+            initial_amount,
+            monthly_deposit,
+            duration_years,
+            kr_inflation_rate,
+            tax_rate
+        )
+        VALUES (
+            #{initialAmount},
+            #{monthlyDeposit},
+            #{durationYears},
+            #{krInflationRate},
+            #{taxRate}
+        )
+    </insert>
+
+    <select id="findById"
+            resultType="org.cloud.domain.entity.SimulationConfig">
+
+        SELECT
+            config_id AS id,
+            initial_amount,
+            monthly_deposit,
+            duration_years,
+            kr_inflation_rate,
+            tax_rate,
+            created_at
+        FROM simulation_config
+        WHERE config_id = #{id}
+
+    </select>
+
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="org.cloud.mapper.StandardMarketPriceMapper">
+ 
+	<select id="findAll" resultType="org.cloud.domain.entity.StandardMarketPrice">
+        SELECT
+            price_id AS priceId,
+            item_name,
+            price,
+            unit,
+            country,
+            year
+        FROM standard_market_price
+    </select>
+    
+     <select id="findByItemName" resultType="org.cloud.domain.entity.StandardMarketPrice">
+        SELECT
+            price_id AS priceId,
+            item_name,
+            price,
+            unit,
+            country,
+            year
+        FROM standard_market_price
+        WHERE item_name = #{itemName}
+        LIMIT 1
+    </select>
+
+</mapper>

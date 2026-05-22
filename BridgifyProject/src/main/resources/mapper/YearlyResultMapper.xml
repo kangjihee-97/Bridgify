@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.cloud.mapper.YearlyResultMapper">
+
+    <insert id="insertResults">
+        INSERT INTO yearly_result (
+            config_id,
+            year,
+            real_balance_krw,
+            annual_profit,
+            total_profit,
+            return_rate
+        )
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+                #{item.configId},
+                #{item.year},
+                #{item.realBalanceKrw},
+                #{item.annualProfit},
+                #{item.totalProfit},
+                #{item.returnRate}
+            )
+        </foreach>
+    </insert>
+
+    <select id="findByConfigId" resultType="org.cloud.domain.entity.YearlyResult">
+        SELECT
+            result_id AS resultId,
+            config_id AS configId,
+            year,
+            real_balance_krw AS realBalanceKrw,
+            annual_profit AS annualProfit,
+            total_profit AS totalProfit,
+            return_rate AS returnRate
+        FROM yearly_result
+        WHERE config_id = #{configId}
+        ORDER BY year ASC
+    </select>
+
+</mapper>

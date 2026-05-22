@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="org.cloud.mapper.AssetTransactionMapper">
+  
+	<insert id="insertTransactions">
+    INSERT INTO asset_transaction (
+        asset_id, tx_date, quantity, price, exchange_rate
+    )
+    VALUES
+    <foreach collection="list" item="tx" separator=",">
+        (#{tx.assetId}, #{tx.txDate}, #{tx.quantity}, #{tx.price}, #{tx.exchangeRate})
+    </foreach>
+	</insert>
+
+    <select id="findByAssetId" resultType="org.cloud.domain.entity.AssetTransaction">
+        SELECT
+            tx_id AS id,
+            asset_id,
+            tx_date,
+            quantity,
+            price,
+            exchange_rate
+        FROM asset_transaction
+        WHERE asset_id = #{assetId}
+    </select>
+
+</mapper>
