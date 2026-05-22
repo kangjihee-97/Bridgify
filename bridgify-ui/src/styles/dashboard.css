@@ -1,0 +1,578 @@
+/* 1. 기본 배경 및 공통 폰트 */
+body {
+  background-color: #f8fafc; /* */
+  margin: 0;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    sans-serif;
+}
+
+/* 2. 레이아웃: 3단 그리드 */
+.dashboard-wrapper {
+  display: grid;
+  /* 가이드: 320px 1fr 320px -> 시안 비율에 맞춰 미세 조정 */
+  grid-template-columns: 360px 1fr 340px;
+  gap: 24px;
+  padding: 24px;
+  align-items: start;
+  max-width: 100%; /* 가이드 12번: 늘어짐 방지 위해 필요시 1600px 제한 */
+}
+
+.left-panel,
+.main-panel,
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px; /* 가이드 2번: 섹션 간 간격 통일 */
+}
+
+/* 3. 카드 스택 (세로 정렬) */
+.report-stack,
+.summary-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 4. StatBox 그룹 (가로 정렬) */
+.stat-group {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: stretch; /* 높이 통일 */
+}
+
+/* 5. VS 배지 스타일 */
+.stat-vs-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #6366f1;
+  background: #eef2ff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  align-self: center;
+  flex-shrink: 0;
+}
+
+/* 6. 요약 리스트 스타일 */
+.summary-list-content {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summary-row,
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summary-label {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.summary-value {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.summary-value.negative {
+  color: #ef4444; /* */
+}
+
+/* 7. 기타 유틸리티 (구분선, 버튼, 차트) */
+.divider.spacing-divider {
+  margin: 20px 0;
+  border-top: 1px solid #eee;
+}
+
+.run-button {
+  margin-top: 20px;
+}
+
+.chart-box,
+.chart-container {
+  height: 280px; /*의 비율 유지 */
+  margin-top: 16px;
+}
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0; /* 경계선 추가 */
+  height: 64px; /* 높이 고정 */
+}
+
+/* 왼쪽: 로고 + 텍스트 정보 */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-info h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.brand-info span {
+  font-size: 12px;
+  color: #64748b;
+  display: block;
+}
+
+/* 오른쪽: 버튼 그룹 */
+.header-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* 공통 버튼 스타일 */
+.header-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+/* 보조 버튼 (새 시뮬레이션, 결과 저장) */
+.header-btn.secondary {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  color: #475569;
+}
+
+.header-btn.secondary:hover {
+  background-color: #f8fafc;
+}
+
+/* 강조 버튼 (PDF 다운로드) */
+.header-btn.primary {
+  background-color: #ffffff;
+  border-color: #6366f1;
+  color: #6366f1;
+}
+
+.header-btn.primary:hover {
+  background-color: #eef2ff;
+}
+/* 실물 가치 섹션 내부 그리드 */
+.goods-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 가로 3열 고정 */
+  gap: 16px;
+  margin: 20px 0;
+}
+
+/* 개별 물품 카드 스타일 */
+.goods-item-inner-card {
+  background: #f8fafc; /* 시안 느낌의 밝은 배경 */
+  border: 1px solid #eef2ff;
+  border-radius: 16px;
+  padding: 24px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.goods-item-inner-card:hover {
+  transform: translateY(-4px); /* 살짝 떠오르는 효과 */
+}
+
+.item-emoji-wrapper {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.item-name-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #3b82f6; /* 시안의 포인트 컬러 */
+  margin: 0 0 4px 0;
+}
+
+.item-value-text {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+}
+
+.item-unit-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  margin-left: 2px;
+}
+
+/* 헤더 및 푸터 텍스트 */
+.comparison-subtitle {
+  text-align: center;
+  font-size: 14px;
+  color: #475569;
+}
+
+.comparison-footer-area {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+.tax-notice {
+  color: #ef4444; /* 세금 안내는 붉은 계열 */
+  font-weight: 600;
+}
+.dashboard-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+.hero-stat-box {
+  flex: 1;
+  padding: 24px;
+  border-radius: 16px; /* 조금 더 부드러운 곡선 */
+  text-align: center;
+  transition: transform 0.2s ease; /* 호버 효과 추가 */
+  border: 1px solid transparent; /* 테두리 공간 확보 */
+}
+
+.hero-stat-box:hover {
+  transform: translateY(-2px);
+}
+
+/* 변형(Variant)별 색상 설정 */
+.hero-stat-box.blue {
+  background-color: #eff6ff;
+  border-color: #dbeafe;
+}
+.hero-stat-box.green {
+  background-color: #f0fdf4;
+  border-color: #dcfce7;
+}
+.hero-stat-box.purple {
+  background-color: #f5f3ff;
+  border-color: #ddd6fe;
+}
+
+/* 텍스트 스타일링 */
+.stat-label {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 800; /* 조금 더 두껍게 */
+  margin: 0;
+}
+
+/* 변형별 텍스트 색상 */
+.hero-stat-box.blue .stat-value {
+  color: #3b82f6;
+}
+.hero-stat-box.green .stat-value {
+  color: #22c55e;
+}
+.hero-stat-box.purple .stat-value {
+  color: #8b5cf6;
+}
+
+.stat-sub-value {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 6px;
+  font-weight: 500;
+}
+/* 차트 섹션 내부 그리드 레이아웃 */
+.result-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3열 배치 */
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.summary-item-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.summary-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* 실질 가치는 보라색 강조 */
+.summary-value.real {
+  color: #7c3aed;
+}
+
+/* 배지 스타일 */
+.summary-badge {
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.summary-badge.profit {
+  color: #2563eb;
+}
+.summary-badge.real-profit {
+  color: #64748b;
+}
+
+/* 차트 컨테이너 */
+.chart-container {
+  height: 320px;
+  width: 100%;
+}
+
+/* 세팅 폼 레이아웃 */
+.settings-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+/* 입력 필드 공통 */
+.input-field label {
+  display: block;
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.input-with-unit {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0 12px;
+  transition: border-color 0.2s;
+}
+
+.input-with-unit:focus-within {
+  border-color: #6366f1;
+  background: #fff;
+}
+
+.input-with-unit input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+}
+
+.unit-text {
+  font-size: 13px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.helper-text {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+/* 2열 그리드 */
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.asset-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.asset-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.asset-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* 합계 배지 스타일 */
+.ratio-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ratio-badge.valid {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+.ratio-badge.invalid {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.ratio-diff {
+  margin-left: 4px;
+  font-weight: 500;
+}
+
+/* 자산 입력 열 스타일 */
+.asset-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.input-box {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0 12px;
+}
+
+.input-box.ticker {
+  flex: 2;
+}
+.input-box.ratio {
+  flex: 1.2;
+}
+
+.input-box .input-field {
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.remove-btn:hover {
+  color: #ef4444;
+}
+
+.add-asset-btn {
+  width: 100%;
+  padding: 10px;
+  background: #fff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.add-asset-btn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 11px;
+  margin-top: 4px;
+}
+.pie-chart-container {
+  height: 250px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* SVG 내부 텍스트 스타일링 */
+.chart-label-title {
+  font-size: 12px;
+  fill: #94a3b8;
+  font-weight: 500;
+}
+
+.chart-label-value {
+  font-size: 18px;
+  fill: #a855f7;
+  font-weight: 800;
+}
+
+/* 범례(Legend) 텍스트 스타일 */
+.recharts-legend-item-text {
+  font-size: 12px !important;
+  color: #64748b !important;
+}

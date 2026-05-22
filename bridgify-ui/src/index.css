@@ -1,0 +1,14 @@
+/* src/index.css */
+@import "tailwindcss";
+
+@tailwind utilities;
+
+/* 여기에 기존에 쓰던 스타일이 있다면 그대로 두셔도 됩니다 */
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: #f4f7fa; /* 시안의 연회색 배경 */
+}
