@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { PortfolioGrowthChart } from "./GrowthChart";
-import Card from "../ui/Card";
 import { formatKoreanCurrency } from "../../utils/format";
 import type {
   YearlyResultResponse,
@@ -46,41 +45,39 @@ export const SimulationResultSection = ({ results, request }: Props) => {
   }, [totalProfit, totalPrincipal, lastResult]);
 
   return (
-    <div className="report-stack">
-      <Card title="자산 성장 추이 추정" className="chart-section-card">
-        <div className="chart-container">
-          <PortfolioGrowthChart data={chartData} />
+    <div className="chart-section-card">
+      <div className="chart-container">
+        <PortfolioGrowthChart data={chartData} />
+      </div>
+
+      <div className="result-summary-grid">
+        <div className="summary-item-box">
+          <p className="summary-label">최종 명목 잔고</p>
+          <h3 className="summary-value">
+            {formatKoreanCurrency(lastResult.nominalBalanceKrw)}
+          </h3>
+          <span className="summary-badge profit">
+            수익률 +{metrics.profitRate.toFixed(1)}%
+          </span>
         </div>
 
-        <div className="result-summary-grid">
-          <div className="summary-item-box">
-            <p className="summary-label">최종 명목 잔고</p>
-            <h3 className="summary-value">
-              {formatKoreanCurrency(lastResult.nominalBalanceKrw)}
-            </h3>
-            <span className="summary-badge profit">
-              수익률 +{metrics.profitRate.toFixed(1)}%
-            </span>
-          </div>
-
-          <div className="summary-item-box">
-            <p className="summary-label">실질 구매력 가치</p>
-            <h3 className="summary-value real">
-              {formatKoreanCurrency(lastResult.realBalanceKrw)}
-            </h3>
-            <span className="summary-badge real-profit">
-              실질 수익률 {metrics.realProfitRate.toFixed(1)}%
-            </span>
-          </div>
-
-          <div className="summary-item-box">
-            <p className="summary-label">총 투자 원금</p>
-            <h3 className="summary-value">
-              {formatKoreanCurrency(totalPrincipal)}
-            </h3>
-          </div>
+        <div className="summary-item-box">
+          <p className="summary-label">실질 구매력 가치</p>
+          <h3 className="summary-value real">
+            {formatKoreanCurrency(lastResult.realBalanceKrw)}
+          </h3>
+          <span className="summary-badge real-profit">
+            실질 수익률 {metrics.realProfitRate.toFixed(1)}%
+          </span>
         </div>
-      </Card>
+
+        <div className="summary-item-box">
+          <p className="summary-label">총 투자 원금</p>
+          <h3 className="summary-value">
+            {formatKoreanCurrency(totalPrincipal)}
+          </h3>
+        </div>
+      </div>
     </div>
   );
 };

@@ -87,6 +87,18 @@ export default function SimulationPage() {
                   />
                 </div>
 
+                <p className="value-statement">
+                  {form.durationYears}년 뒤 내 돈{" "}
+                  <strong className="value-statement-nominal">
+                    {formatKoreanCurrency(result.nominalBalanceKrw)}
+                  </strong>
+                  은, 현재의{" "}
+                  <strong className="value-statement-real">
+                    {formatKoreanCurrency(result.realBalanceKrw)}
+                  </strong>
+                  의 가치를 가집니다.
+                </p>
+
                 <GoodsComparisonCard result={result} />
               </Card>
 

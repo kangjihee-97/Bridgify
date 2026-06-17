@@ -1,6 +1,10 @@
 export interface AssetAllocation {
   ticker: string;
   ratio: number | null;
+  // 과거 매수 정보 — 셋 다 입력해야 실제 매수가 기준으로 계산된다. 비워두면 "오늘부터 투자"로 간주.
+  purchaseDate?: string | null; // "YYYY-MM-DD"
+  purchasePrice?: number | null;
+  purchaseRate?: number | null;
 }
 
 export interface SimulationRequest {

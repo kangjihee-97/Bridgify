@@ -1,30 +1,37 @@
+/* ===================================================
+   Bridgify Dashboard — 시안 기준 스타일 시트
+   톤: 보라(시뮬레이션/실질가치) · 파랑(명목자산) · 초록(결과요약)
+   =================================================== */
+
 /* 1. 기본 배경 및 공통 폰트 */
 body {
-  background-color: #f8fafc; /* */
+  background-color: #f4f5fb;
   margin: 0;
   font-family:
     "Pretendard",
     -apple-system,
     sans-serif;
+  color: #1e1b3a;
 }
 
 /* 2. 레이아웃: 3단 그리드 */
 .dashboard-wrapper {
   display: grid;
-  /* 가이드: 320px 1fr 320px -> 시안 비율에 맞춰 미세 조정 */
   grid-template-columns: 360px 1fr 340px;
-  gap: 24px;
-  padding: 24px;
+  gap: 28px;
+  padding: 32px;
   align-items: start;
-  max-width: 100%; /* 가이드 12번: 늘어짐 방지 위해 필요시 1600px 제한 */
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 .left-panel,
-.main-panel,
-.right-panel {
+.center-panel,
+.right-panel,
+.panel {
   display: flex;
   flex-direction: column;
-  gap: 24px; /* 가이드 2번: 섹션 간 간격 통일 */
+  gap: 28px;
 }
 
 /* 3. 카드 스택 (세로 정렬) */
@@ -32,25 +39,136 @@ body {
 .summary-stack {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 28px;
 }
 
-/* 4. StatBox 그룹 (가로 정렬) */
+.empty-placeholder {
+  background: #fff;
+  border: 1px solid #e9e7f7;
+  border-radius: 20px;
+  padding: 80px 24px;
+  text-align: center;
+  color: #8b87ab;
+  font-size: 14px;
+}
+
+/* ===================================================
+   카드 기본
+   =================================================== */
+.dashboard-card {
+  background: white;
+  border: 1px solid #e5ebfb;
+  border-radius: 20px;
+  padding: 28px 32px;
+  box-shadow: 0 4px 24px -8px rgba(107, 76, 224, 0.12);
+}
+
+.card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #221d4e;
+  margin: 0 0 24px 0;
+}
+
+/* ===================================================
+   헤더
+   =================================================== */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5ebfb;
+  height: 64px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #efecfc;
+}
+
+.brand-info h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #221d4e;
+  line-height: 1.2;
+}
+
+.brand-info span {
+  font-size: 12px;
+  color: #8b87ab;
+  display: block;
+}
+
+.header-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.header-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+}
+
+.header-btn.secondary {
+  background-color: #ffffff;
+  border-color: #e3e0f5;
+  color: #524c7a;
+}
+
+.header-btn.secondary:hover {
+  background-color: #f3f6fe;
+}
+
+.header-btn.primary {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+.header-btn.primary:hover {
+  background-color: #1d4ed8;
+}
+
+/* ===================================================
+   2. 자산 구매력 환산 리포트 — 명목 vs 실질 (파랑/초록)
+   =================================================== */
 .stat-group {
   display: flex;
   gap: 16px;
   margin-bottom: 24px;
-  align-items: stretch; /* 높이 통일 */
+  align-items: stretch;
 }
 
-/* 5. VS 배지 스타일 */
 .stat-vs-badge {
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  color: #6366f1;
-  background: #eef2ff;
+  font-size: 13px;
+  color: #ffffff;
+  background: #2563eb;
   border-radius: 50%;
   width: 36px;
   height: 36px;
@@ -58,145 +176,122 @@ body {
   flex-shrink: 0;
 }
 
-/* 6. 요약 리스트 스타일 */
-.summary-list-content {
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+/* 시안 특유의 한 줄 강조 카피 */
+.value-statement {
+  text-align: center;
+  font-size: 17px;
+  color: #524c7a;
+  margin: 8px 0 28px 0;
+  line-height: 1.7;
 }
 
-.summary-row,
-.summary-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.summary-label {
-  color: #64748b;
-  font-size: 13px;
-}
-
-.summary-value {
-  font-weight: 700;
-  color: #1e293b;
-}
-
-.summary-value.negative {
-  color: #ef4444; /* */
-}
-
-/* 7. 기타 유틸리티 (구분선, 버튼, 차트) */
-.divider.spacing-divider {
-  margin: 20px 0;
-  border-top: 1px solid #eee;
-}
-
-.run-button {
-  margin-top: 20px;
-}
-
-.chart-box,
-.chart-container {
-  height: 280px; /*의 비율 유지 */
-  margin-top: 16px;
-}
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 24px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e2e8f0; /* 경계선 추가 */
-  height: 64px; /* 높이 고정 */
-}
-
-/* 왼쪽: 로고 + 텍스트 정보 */
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.brand-info h1 {
-  margin: 0;
-  font-size: 18px;
+.value-statement strong {
   font-weight: 800;
-  color: #1e293b;
-  line-height: 1.2;
 }
 
-.brand-info span {
-  font-size: 12px;
-  color: #64748b;
-  display: block;
+.value-statement-nominal {
+  color: #1e3a8a;
 }
 
-/* 오른쪽: 버튼 그룹 */
-.header-right {
-  display: flex;
-  gap: 8px;
-  align-items: center;
+.value-statement-real {
+  color: #2563eb;
 }
 
-/* 공통 버튼 스타일 */
-.header-btn {
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
+.hero-stat-box {
+  flex: 1;
+  padding: 28px 24px;
+  border-radius: 16px;
+  text-align: center;
+  transition: transform 0.15s ease;
   border: 1px solid transparent;
 }
 
-/* 보조 버튼 (새 시뮬레이션, 결과 저장) */
-.header-btn.secondary {
-  background-color: #ffffff;
-  border-color: #e2e8f0;
-  color: #475569;
+.hero-stat-box:hover {
+  transform: translateY(-2px);
 }
 
-.header-btn.secondary:hover {
-  background-color: #f8fafc;
+.hero-stat-box.blue {
+  background-color: #eef1fd;
+  border-color: #dbe2fa;
+}
+.hero-stat-box.green {
+  background-color: #eaf8ee;
+  border-color: #d3f0db;
+}
+.hero-stat-box.purple {
+  background-color: #eaf0fe;
+  border-color: #c7d9fb;
 }
 
-/* 강조 버튼 (PDF 다운로드) */
-.header-btn.primary {
-  background-color: #ffffff;
-  border-color: #6366f1;
-  color: #6366f1;
+.stat-label {
+  font-size: 13px;
+  color: #6b6690;
+  margin-bottom: 10px;
+  font-weight: 600;
 }
 
-.header-btn.primary:hover {
-  background-color: #eef2ff;
+.stat-value {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.5px;
 }
-/* 실물 가치 섹션 내부 그리드 */
+
+.hero-stat-box.blue .stat-value {
+  color: #3457d5;
+}
+.hero-stat-box.green .stat-value {
+  color: #1f9d55;
+}
+.hero-stat-box.purple .stat-value {
+  color: #2563eb;
+}
+
+.stat-sub-value {
+  font-size: 12px;
+  color: #8b87ab;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* ===================================================
+   실물 가치 체감 지표 (치킨/자동차/부동산 카드)
+   =================================================== */
+.comparison-header-content {
+  margin-bottom: 4px;
+}
+
+.comparison-subtitle {
+  text-align: center;
+  font-size: 14px;
+  color: #524c7a;
+}
+
+.comparison-subtitle strong {
+  color: #2563eb;
+}
+
 .goods-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 가로 3열 고정 */
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   margin: 20px 0;
 }
 
-/* 개별 물품 카드 스타일 */
 .goods-item-inner-card {
-  background: #f8fafc; /* 시안 느낌의 밝은 배경 */
-  border: 1px solid #eef2ff;
+  background: #f3f6fe;
+  border: 1px solid #e5ebfb;
   border-radius: 16px;
   padding: 24px 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  transition: transform 0.2s ease;
+  transition: transform 0.15s ease;
 }
 
 .goods-item-inner-card:hover {
-  transform: translateY(-4px); /* 살짝 떠오르는 효과 */
+  transform: translateY(-3px);
 }
 
 .item-emoji-wrapper {
@@ -207,123 +302,47 @@ body {
 .item-name-label {
   font-size: 13px;
   font-weight: 700;
-  color: #3b82f6; /* 시안의 포인트 컬러 */
+  color: #3457d5;
   margin: 0 0 4px 0;
 }
 
 .item-value-text {
   font-size: 18px;
   font-weight: 800;
-  color: #1e293b;
+  color: #221d4e;
   margin: 0;
 }
 
 .item-unit-text {
   font-size: 13px;
   font-weight: 500;
-  color: #64748b;
+  color: #8b87ab;
   margin-left: 2px;
-}
-
-/* 헤더 및 푸터 텍스트 */
-.comparison-subtitle {
-  text-align: center;
-  font-size: 14px;
-  color: #475569;
 }
 
 .comparison-footer-area {
   margin-top: 16px;
   text-align: center;
   font-size: 12px;
-  color: #94a3b8;
+  color: #a6a2c2;
   line-height: 1.6;
 }
 
 .tax-notice {
-  color: #ef4444; /* 세금 안내는 붉은 계열 */
+  color: #d5455a;
   font-weight: 600;
 }
-.dashboard-card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
 
-.card-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 20px;
-}
-.hero-stat-box {
-  flex: 1;
-  padding: 24px;
-  border-radius: 16px; /* 조금 더 부드러운 곡선 */
-  text-align: center;
-  transition: transform 0.2s ease; /* 호버 효과 추가 */
-  border: 1px solid transparent; /* 테두리 공간 확보 */
-}
-
-.hero-stat-box:hover {
-  transform: translateY(-2px);
-}
-
-/* 변형(Variant)별 색상 설정 */
-.hero-stat-box.blue {
-  background-color: #eff6ff;
-  border-color: #dbeafe;
-}
-.hero-stat-box.green {
-  background-color: #f0fdf4;
-  border-color: #dcfce7;
-}
-.hero-stat-box.purple {
-  background-color: #f5f3ff;
-  border-color: #ddd6fe;
-}
-
-/* 텍스트 스타일링 */
-.stat-label {
-  font-size: 13px;
-  color: #64748b;
-  margin-bottom: 8px;
-  font-weight: 500;
-}
-
-.stat-value {
-  font-size: 24px;
-  font-weight: 800; /* 조금 더 두껍게 */
-  margin: 0;
-}
-
-/* 변형별 텍스트 색상 */
-.hero-stat-box.blue .stat-value {
-  color: #3b82f6;
-}
-.hero-stat-box.green .stat-value {
-  color: #22c55e;
-}
-.hero-stat-box.purple .stat-value {
-  color: #8b5cf6;
-}
-
-.stat-sub-value {
-  font-size: 12px;
-  color: #94a3b8;
-  margin-top: 6px;
-  font-weight: 500;
-}
-/* 차트 섹션 내부 그리드 레이아웃 */
+/* ===================================================
+   요약 수치 (총 투자 원금 / 총 수익 / 세후 수익 등)
+   =================================================== */
 .result-summary-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3열 배치 */
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   margin-top: 24px;
   padding-top: 24px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid #e5ebfb;
 }
 
 .summary-item-box {
@@ -334,23 +353,25 @@ body {
 
 .summary-label {
   font-size: 13px;
-  color: #64748b;
-  font-weight: 500;
+  color: #6b6690;
+  font-weight: 600;
 }
 
 .summary-value {
   font-size: 20px;
   font-weight: 800;
-  color: #1e293b;
+  color: #221d4e;
   margin: 0;
 }
 
-/* 실질 가치는 보라색 강조 */
 .summary-value.real {
-  color: #7c3aed;
+  color: #2563eb;
 }
 
-/* 배지 스타일 */
+.summary-value.negative {
+  color: #d5455a;
+}
+
 .summary-badge {
   font-size: 11px;
   font-weight: 700;
@@ -358,109 +379,115 @@ body {
 }
 
 .summary-badge.profit {
-  color: #2563eb;
+  color: #3457d5;
 }
 .summary-badge.real-profit {
-  color: #64748b;
+  color: #6b6690;
 }
 
-/* 차트 컨테이너 */
-.chart-container {
-  height: 320px;
-  width: 100%;
-}
-
-/* 세팅 폼 레이아웃 */
-.settings-form-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.settings-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.settings-label {
-  font-size: 14px;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 4px;
-}
-
-/* 입력 필드 공통 */
-.input-field label {
-  display: block;
-  font-size: 12px;
-  color: #64748b;
-  margin-bottom: 6px;
-}
-
-.input-with-unit {
-  display: flex;
-  align-items: center;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 0 12px;
-  transition: border-color 0.2s;
-}
-
-.input-with-unit:focus-within {
-  border-color: #6366f1;
-  background: #fff;
-}
-
-.input-with-unit input {
-  border: none;
-  background: transparent;
-  width: 100%;
-  padding: 10px 0;
-  font-size: 14px;
-  font-weight: 600;
-  outline: none;
-}
-
-.unit-text {
-  font-size: 13px;
-  color: #94a3b8;
-  font-weight: 600;
-}
-
-.helper-text {
-  font-size: 11px;
-  color: #94a3b8;
-  margin-top: 4px;
-}
-
-/* 2열 그리드 */
-.input-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.asset-form-wrapper {
+/* 우측 패널 요약 리스트 (세금 요약, 주요 가정 요약) */
+.summary-list-content {
+  padding: 8px 0 0 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.summary-row,
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ===================================================
+   차트
+   =================================================== */
+.chart-container {
+  height: 320px;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.pie-chart-container {
+  height: 250px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.chart-label-title {
+  font-size: 12px;
+  fill: #8b87ab;
+  font-weight: 500;
+}
+
+.chart-label-value {
+  font-size: 18px;
+  fill: #2563eb;
+  font-weight: 800;
+}
+
+.recharts-legend-item-text {
+  font-size: 12px !important;
+  color: #524c7a !important;
+}
+
+/* ===================================================
+   좌측 패널 — 시뮬레이션 입력
+   =================================================== */
+.input-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.divider.spacing-divider {
+  margin: 20px 0;
+  border-top: 1px solid #e5ebfb;
+}
+
+.run-button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 14px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.run-button:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.run-button:disabled {
+  background: #a9c2f8;
+  cursor: not-allowed;
+}
+
+/* 종목 설정 (A. 종목 설정) */
+.asset-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .asset-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .asset-title {
   font-size: 14px;
   font-weight: 700;
-  color: #1e293b;
+  color: #221d4e;
 }
 
-/* 합계 배지 스타일 */
 .ratio-badge {
   padding: 4px 10px;
   border-radius: 20px;
@@ -469,12 +496,12 @@ body {
 }
 
 .ratio-badge.valid {
-  background-color: #f0fdf4;
-  color: #16a34a;
+  background-color: #eaf8ee;
+  color: #1f9d55;
 }
 .ratio-badge.invalid {
-  background-color: #fef2f2;
-  color: #dc2626;
+  background-color: #fbeaec;
+  color: #d5455a;
 }
 
 .ratio-diff {
@@ -482,21 +509,45 @@ body {
   font-weight: 500;
 }
 
-/* 자산 입력 열 스타일 */
+.asset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .asset-row {
   display: flex;
   gap: 8px;
   align-items: center;
-  margin-bottom: 10px;
+}
+
+.ticker-avatar {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #dbe7fd;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
 }
 
 .input-box {
   display: flex;
   align-items: center;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  background: #f3f6fe;
+  border: 1px solid #e5ebfb;
+  border-radius: 10px;
   padding: 0 12px;
+  transition: border-color 0.15s;
+}
+
+.input-box:focus-within {
+  border-color: #2563eb;
+  background: #fff;
 }
 
 .input-box.ticker {
@@ -510,69 +561,258 @@ body {
   border: none;
   background: transparent;
   width: 100%;
-  padding: 10px 0;
+  padding: 11px 0;
   font-size: 14px;
   font-weight: 600;
   outline: none;
+  color: #221d4e;
+}
+
+.unit-text {
+  font-size: 13px;
+  color: #a6a2c2;
+  font-weight: 600;
 }
 
 .remove-btn {
   background: none;
   border: none;
-  color: #94a3b8;
+  color: #a6a2c2;
   font-size: 20px;
   cursor: pointer;
   padding: 0 4px;
+  line-height: 1;
 }
 
 .remove-btn:hover {
-  color: #ef4444;
+  color: #d5455a;
 }
 
 .add-asset-btn {
   width: 100%;
   padding: 10px;
   background: #fff;
-  border: 1px dashed #cbd5e1;
-  border-radius: 8px;
-  color: #64748b;
+  border: 1px dashed #c2d3f7;
+  border-radius: 10px;
+  color: #6b6690;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: 4px;
+  transition: all 0.15s;
 }
 
 .add-asset-btn:hover {
-  background: #f8fafc;
-  border-color: #94a3b8;
+  background: #f3f6fe;
+  border-color: #2563eb;
+  color: #2563eb;
 }
 
 .error-message {
-  color: #dc2626;
+  color: #d5455a;
   font-size: 11px;
   margin-top: 4px;
 }
-.pie-chart-container {
-  height: 250px;
-  width: 100%;
-  margin-top: 10px;
+
+/* 세팅 폼 (B/C/D. 매수정보/경제지표/세금) */
+.settings-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
 }
 
-/* SVG 내부 텍스트 스타일링 */
-.chart-label-title {
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #221d4e;
+  margin: 0;
+}
+
+.settings-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.settings-label {
+  display: block;
   font-size: 12px;
-  fill: #94a3b8;
-  font-weight: 500;
+  color: #8b87ab;
+  margin-bottom: 6px;
+  font-weight: 600;
 }
 
-.chart-label-value {
-  font-size: 18px;
-  fill: #a855f7;
-  font-weight: 800;
+.input-field {
+  display: flex;
+  flex-direction: column;
 }
 
-/* 범례(Legend) 텍스트 스타일 */
-.recharts-legend-item-text {
-  font-size: 12px !important;
-  color: #64748b !important;
+.settings-input {
+  border: 1px solid #e5ebfb;
+  background: #f3f6fe;
+  width: 100%;
+  padding: 11px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  border-radius: 10px;
+  color: #221d4e;
+  box-sizing: border-box;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.settings-input:focus {
+  border-color: #2563eb;
+  background: #fff;
+}
+
+.input-with-unit {
+  display: flex;
+  align-items: center;
+  background: #f3f6fe;
+  border: 1px solid #e5ebfb;
+  border-radius: 10px;
+  padding: 0 12px;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.input-with-unit:focus-within {
+  border-color: #2563eb;
+  background: #fff;
+}
+
+.input-with-unit .settings-input,
+.input-with-unit input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 11px 0;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  color: #221d4e;
+}
+
+.input-unit {
+  font-size: 13px;
+  color: #a6a2c2;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.helper-text {
+  font-size: 11px;
+  color: #a6a2c2;
+  margin-top: 4px;
+}
+
+/* ===================================================
+   누락 보강 — 레이아웃 루트, 카드 내부, 기타 wrapper
+   =================================================== */
+.layout-root {
+  min-height: 100vh;
+  background-color: #f4f5fb;
+}
+
+.layout-content {
+  width: 100%;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-section-card,
+.comparison-section-card {
+  /* dashboard-card 위에 추가되는 보조 클래스 — 별도 오버라이드 불필요 */
+}
+
+.item-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-group-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.year-notice {
+  color: #a6a2c2;
+}
+
+/* ===================================================
+   과거 매수 정보 표 (시안 2 — 티커/매수일자/평단가/환율)
+   =================================================== */
+.purchase-helper {
+  margin: 4px 0 14px 0;
+  line-height: 1.5;
+}
+
+.purchase-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.purchase-table-header {
+  display: grid;
+  grid-template-columns: 56px 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+.purchase-table-header span {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8b94a8;
+}
+
+.purchase-row {
+  display: grid;
+  grid-template-columns: 56px 1fr 1fr 1fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.purchase-ticker-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1d4ed8;
+  text-align: center;
+  background: #eaf0fe;
+  border-radius: 8px;
+  padding: 10px 4px;
+}
+
+.input-box.purchase-date,
+.input-box.purchase-price,
+.input-box.purchase-rate {
+  flex: 1;
+  padding: 0 8px;
+}
+
+.input-box.purchase-date .input-field,
+.input-box.purchase-price .input-field,
+.input-box.purchase-rate .input-field {
+  padding: 9px 0;
+  font-size: 13px;
 }

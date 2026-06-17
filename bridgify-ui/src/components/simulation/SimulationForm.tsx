@@ -1,30 +1,50 @@
 import { useSimulationStore } from "../../store/simulationStore";
 import type { AssetAllocation } from "../../types/simulation";
 
+type AssetFieldValue = string | number | null;
+
 export const AssetAllocationForm = () => {
   const { assets, setAssets } = useSimulationStore();
 
   const handleAssetChange = (
     index: number,
     field: keyof AssetAllocation,
-    value: string,
+    value: AssetFieldValue,
   ) => {
     const updated = [...assets];
-    const processedValue = field === "ticker" ? value.toUpperCase() : value;
+    let processedValue = value;
+
+    if (field === "ticker" && typeof value === "string") {
+      processedValue = value.toUpperCase();
+    }
+
+    if (
+      (field === "ratio" ||
+        field === "purchasePrice" ||
+        field === "purchaseRate") &&
+      typeof value === "string"
+    ) {
+      processedValue = value === "" ? null : Number(value);
+    }
 
     updated[index] = {
       ...updated[index],
-      [field]:
-        field === "ratio"
-          ? processedValue === ""
-            ? null
-            : Number(processedValue)
-          : processedValue,
+      [field]: processedValue,
     };
     setAssets(updated);
   };
 
-  const addAsset = () => setAssets([...assets, { ticker: "", ratio: null }]);
+  const addAsset = () =>
+    setAssets([
+      ...assets,
+      {
+        ticker: "",
+        ratio: null,
+        purchaseDate: null,
+        purchasePrice: null,
+        purchaseRate: null,
+      },
+    ]);
 
   const removeAsset = (index: number) => {
     if (assets.length <= 1) {
@@ -41,7 +61,7 @@ export const AssetAllocationForm = () => {
   return (
     <div className="asset-form-wrapper">
       <header className="asset-header">
-        <h4 className="asset-title">자산 구성</h4>
+        <h4 className="asset-title">종목 설정</h4>
         <div className={`ratio-badge ${isValid ? "valid" : "invalid"}`}>
           합계: {totalRatio}%
           {!isValid && (
@@ -55,6 +75,10 @@ export const AssetAllocationForm = () => {
       <div className="asset-list">
         {assets.map((a, i) => (
           <div key={`${a.ticker}-${i}`} className="asset-row">
+            <div className="ticker-avatar" aria-hidden="true">
+              {a.ticker ? a.ticker.charAt(0) : "?"}
+            </div>
+
             <div className="input-box ticker">
               <input
                 className="input-field"
@@ -95,6 +119,66 @@ export const AssetAllocationForm = () => {
           * 비중의 합이 100%가 되도록 조정해주세요.
         </p>
       )}
+
+      <div className="divider spacing-divider" />
+
+      <header className="asset-header">
+        <h4 className="asset-title">과거 매수 정보</h4>
+      </header>
+      <p className="helper-text purchase-helper">
+        매수일자·평단가·환율을 모두 입력한 종목은 실제 매수가 기준으로 수익을
+        계산합니다. 비워두면 오늘부터 투자한 것으로 가정합니다.
+      </p>
+
+      <div className="purchase-table">
+        <div className="purchase-table-header">
+          <span>티커</span>
+          <span>매수일자</span>
+          <span>평단가 (USD)</span>
+          <span>환율 (KRW/USD)</span>
+        </div>
+
+        {assets.map((a, i) => (
+          <div key={`purchase-${a.ticker}-${i}`} className="purchase-row">
+            <span className="purchase-ticker-label">{a.ticker || "—"}</span>
+
+            <div className="input-box purchase-date">
+              <input
+                type="date"
+                className="input-field"
+                value={a.purchaseDate ?? ""}
+                onChange={(e) =>
+                  handleAssetChange(i, "purchaseDate", e.target.value)
+                }
+              />
+            </div>
+
+            <div className="input-box purchase-price">
+              <input
+                type="number"
+                className="input-field"
+                placeholder="예: 150.00"
+                value={a.purchasePrice ?? ""}
+                onChange={(e) =>
+                  handleAssetChange(i, "purchasePrice", e.target.value)
+                }
+              />
+            </div>
+
+            <div className="input-box purchase-rate">
+              <input
+                type="number"
+                className="input-field"
+                placeholder="예: 1350.00"
+                value={a.purchaseRate ?? ""}
+                onChange={(e) =>
+                  handleAssetChange(i, "purchaseRate", e.target.value)
+                }
+              />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
