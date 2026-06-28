@@ -126,55 +126,50 @@ export const AssetAllocationForm = () => {
         <h4 className="asset-title">과거 매수 정보</h4>
       </header>
       <p className="helper-text purchase-helper">
-        매수일자·평단가·환율을 모두 입력한 종목은 실제 매수가 기준으로 수익을
-        계산합니다. 비워두면 오늘부터 투자한 것으로 가정합니다.
+        매수일자와 평단가를 입력한 종목은 실제 매수가 기준으로 수익을
+        계산합니다. 환율은 매수일자 기준으로 자동 조회되며, 비워두면 오늘부터
+        투자한 것으로 가정합니다.
       </p>
 
-      <div className="purchase-table">
-        <div className="purchase-table-header">
-          <span>티커</span>
-          <span>매수일자</span>
-          <span>평단가 (USD)</span>
-          <span>환율 (KRW/USD)</span>
-        </div>
-
+      <div className="purchase-card-list">
         {assets.map((a, i) => (
-          <div key={`purchase-${a.ticker}-${i}`} className="purchase-row">
-            <span className="purchase-ticker-label">{a.ticker || "—"}</span>
-
-            <div className="input-box purchase-date">
-              <input
-                type="date"
-                className="input-field"
-                value={a.purchaseDate ?? ""}
-                onChange={(e) =>
-                  handleAssetChange(i, "purchaseDate", e.target.value)
-                }
-              />
+          <div key={`purchase-${a.ticker}-${i}`} className="purchase-card">
+            <div className="purchase-card-ticker">
+              <span className="ticker-avatar small" aria-hidden="true">
+                {a.ticker ? a.ticker.charAt(0) : "?"}
+              </span>
+              {a.ticker || "종목 미입력"}
             </div>
 
-            <div className="input-box purchase-price">
-              <input
-                type="number"
-                className="input-field"
-                placeholder="예: 150.00"
-                value={a.purchasePrice ?? ""}
-                onChange={(e) =>
-                  handleAssetChange(i, "purchasePrice", e.target.value)
-                }
-              />
-            </div>
+            <div className="purchase-card-fields">
+              <div className="purchase-field">
+                <span className="purchase-field-label">매수일자</span>
+                <div className="input-box purchase-date">
+                  <input
+                    type="date"
+                    className="input-field"
+                    value={a.purchaseDate ?? ""}
+                    onChange={(e) =>
+                      handleAssetChange(i, "purchaseDate", e.target.value)
+                    }
+                  />
+                </div>
+              </div>
 
-            <div className="input-box purchase-rate">
-              <input
-                type="number"
-                className="input-field"
-                placeholder="예: 1350.00"
-                value={a.purchaseRate ?? ""}
-                onChange={(e) =>
-                  handleAssetChange(i, "purchaseRate", e.target.value)
-                }
-              />
+              <div className="purchase-field">
+                <span className="purchase-field-label">평단가 (USD)</span>
+                <div className="input-box purchase-price">
+                  <input
+                    type="number"
+                    className="input-field"
+                    placeholder="예: 150.00"
+                    value={a.purchasePrice ?? ""}
+                    onChange={(e) =>
+                      handleAssetChange(i, "purchasePrice", e.target.value)
+                    }
+                  />
+                </div>
+              </div>
             </div>
           </div>
         ))}

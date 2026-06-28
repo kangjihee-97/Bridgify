@@ -18,34 +18,85 @@ import { formatKoreanCurrency } from "../utils/format";
 import "../styles/dashboard.css";
 
 export default function SimulationPage() {
-  const { result, form, assets, setResult } = useSimulationStore();
+  const { result, form, assets, setResult, setAssets, setForm } =
+    useSimulationStore();
 
   const [isCalculating, setIsCalculating] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const handleRun = async () => {
     setIsCalculating(true);
-
     try {
-      const data = await runSimulationApi({
-        ...form,
-        assets,
-      } as any);
-
+      const data = await runSimulationApi({ ...form, assets } as any);
       setResult(data);
     } catch (error) {
       console.error("시뮬레이션 실패:", error);
-
       alert("서버 연결에 실패했습니다. 백엔드 주소나 네트워크를 확인하세요.");
     } finally {
       setIsCalculating(false);
     }
   };
 
+  const handleReset = () => {
+    setResult(null);
+    setAssets([
+      {
+        ticker: "",
+        ratio: null,
+        purchaseDate: null,
+        purchasePrice: null,
+        purchaseRate: null,
+      },
+    ]);
+    setForm("initialAmount", 1000000);
+    setForm("monthlyDeposit", 500000);
+    setForm("durationYears", 10);
+    setForm("krInflationRate", 3);
+    setForm("taxRate", 0.15);
+    setForm("expectedReturn", null as any);
+  };
+
+  const handleSave = () => {
+    if (!result) return;
+    const simId = `SIM-${result.configId?.toString().padStart(6, "0")}`;
+    showToast(`저장 완료! ${simId} 번호로 조회하세요.`);
+  };
+
   return (
-    <DashboardLayout>
+    <DashboardLayout
+      onReset={handleReset}
+      onSave={handleSave}
+      onPdf={() => window.print()}
+    >
+      {/* 토스트 메시지 */}
+      {toast && (
+        <div
+          style={{
+            position: "fixed",
+            top: "20px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "#3730a3",
+            color: "#fff",
+            padding: "12px 24px",
+            borderRadius: "12px",
+            fontSize: "14px",
+            fontWeight: 600,
+            zIndex: 9999,
+            boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+          }}
+        >
+          {toast}
+        </div>
+      )}
       <div className="dashboard-wrapper">
         {/* 좌측 입력 패널 */}
-        <aside className="panel left-panel">
+        <aside className="panel left-panel" style={{ alignSelf: "start" }}>
           <Card title="1. 시뮬레이션 입력" variant="purple">
             <div className="input-section">
               <AssetAllocationForm />
@@ -100,6 +151,45 @@ export default function SimulationPage() {
                 </p>
 
                 <GoodsComparisonCard result={result} />
+              </Card>
+
+              <Card title="요약 수치">
+                <div className="result-summary-grid">
+                  <div className="result-summary-item">
+                    <span className="result-summary-label">총 투자 원금</span>
+                    <span className="result-summary-value">
+                      {formatKoreanCurrency(result.totalPrincipal)}
+                    </span>
+                  </div>
+                  <div className="result-summary-item">
+                    <span className="result-summary-label">
+                      총 투자 수익(명목)
+                    </span>
+                    <span className="result-summary-value nominal">
+                      {formatKoreanCurrency(result.totalProfit)}
+                    </span>
+                  </div>
+                  <div className="result-summary-item">
+                    <span className="result-summary-label">최종 명목 자산</span>
+                    <span className="result-summary-value nominal">
+                      {formatKoreanCurrency(result.nominalBalanceKrw)}
+                    </span>
+                  </div>
+                  <div className="result-summary-item">
+                    <span className="result-summary-label">
+                      실질 구매력 가치
+                    </span>
+                    <span className="result-summary-value real">
+                      {formatKoreanCurrency(result.realBalanceKrw)}
+                    </span>
+                  </div>
+                  <div className="result-summary-item">
+                    <span className="result-summary-label">연평균 수익률</span>
+                    <span className="result-summary-value nominal">
+                      {result.returnRate}%
+                    </span>
+                  </div>
+                </div>
               </Card>
 
               <Card title="자산 성장 추이 추정">
@@ -180,6 +270,96 @@ export default function SimulationPage() {
                       {form.krInflationRate}%
                     </span>
                   </div>
+                </div>
+              </Card>
+
+              <Card title="시뮬레이션 정보">
+                <div className="summary-list-content">
+                  <div className="summary-item">
+                    <span className="summary-label">시뮬레이션 ID</span>
+                    <span
+                      className="summary-value"
+                      style={{
+                        fontSize: "12px",
+                        color: "#6366f1",
+                        fontWeight: 600,
+                      }}
+                    >
+                      SIM-{result.configId?.toString().padStart(6, "0")}
+                    </span>
+                  </div>
+                  <div className="summary-item">
+                    <span className="summary-label">생성일</span>
+                    <span
+                      className="summary-value"
+                      style={{ fontSize: "12px" }}
+                    >
+                      {new Date().toLocaleDateString("ko-KR", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                </div>
+              </Card>
+
+              <Card title="주요 가정 요약">
+                <div className="summary-list-content">
+                  <div className="summary-item">
+                    <span className="summary-label">양도소득세율</span>
+                    <span className="summary-value">
+                      {((form.taxRate ?? 0) * 100).toFixed(0)} %
+                    </span>
+                  </div>
+                  <div className="summary-item">
+                    <span className="summary-label">초기 투자금</span>
+                    <span className="summary-value">
+                      {formatKoreanCurrency(form.initialAmount)}
+                    </span>
+                  </div>
+                  <div className="summary-item">
+                    <span className="summary-label">월 적립금</span>
+                    <span className="summary-value">
+                      {formatKoreanCurrency(form.monthlyDeposit)}
+                    </span>
+                  </div>
+                  <div className="summary-item">
+                    <span className="summary-label">예상 연 수익률</span>
+                    <span className="summary-value">
+                      {form.expectedReturn
+                        ? `${form.expectedReturn} %`
+                        : "종목 자동 계산"}
+                    </span>
+                  </div>
+                  {assets
+                    .filter((a) => a.ticker && a.purchaseRate)
+                    .map((a, i) => (
+                      <div className="summary-item" key={i}>
+                        <span className="summary-label">
+                          {a.ticker} 매수 환율
+                        </span>
+                        <span className="summary-value">
+                          {a.purchaseRate?.toLocaleString()} 원
+                        </span>
+                      </div>
+                    ))}
+                </div>
+                <div
+                  style={{
+                    marginTop: "10px",
+                    padding: "8px 10px",
+                    background: "#f3f6fe",
+                    borderRadius: "8px",
+                    fontSize: "11px",
+                    color: "#8b87ab",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  이 결과는 가정된 조건과 과거 데이터에 기반한 시뮬레이션이며,
+                  실제 투자 결과와 다를 수 있습니다.
                 </div>
               </Card>
 

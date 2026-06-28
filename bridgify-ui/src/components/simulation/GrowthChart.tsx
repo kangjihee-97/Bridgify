@@ -59,7 +59,7 @@ export const PortfolioGrowthChart = ({ data }: Props) => {
   };
 
   return (
-    <div style={{ width: "100%", height: "400px" }}>
+    <div style={{ width: "100%", height: "280px" }}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}

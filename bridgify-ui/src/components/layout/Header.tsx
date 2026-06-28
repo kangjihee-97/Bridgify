@@ -1,4 +1,10 @@
-export default function Header() {
+interface HeaderProps {
+  onReset?: () => void;
+  onSave?: () => void;
+  onPdf?: () => void;
+}
+
+export default function Header({ onReset, onSave, onPdf }: HeaderProps) {
   return (
     <header className="dashboard-header">
       <div className="header-left">
@@ -33,9 +39,13 @@ export default function Header() {
       </div>
 
       <div className="header-right">
-        <button className="header-btn secondary">새 시뮬레이션</button>
-        <button className="header-btn secondary">결과 저장</button>
-        <button className="header-btn primary">
+        <button className="header-btn secondary" onClick={onReset}>
+          새 시뮬레이션
+        </button>
+        <button className="header-btn secondary" onClick={onSave}>
+          결과 저장
+        </button>
+        <button className="header-btn primary" onClick={onPdf}>
           <svg
             width="16"
             height="16"

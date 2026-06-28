@@ -4,14 +4,18 @@ import "../../styles/dashboard.css";
 
 export default function DashboardLayout({
   children,
+  onReset,
+  onSave,
+  onPdf,
 }: {
   children: React.ReactNode;
+  onReset?: () => void;
+  onSave?: () => void;
+  onPdf?: () => void;
 }) {
   return (
     <div className="layout-root">
-      {" "}
-      {/* 이름을 다르게 바꿔줍니다 */}
-      <Header />
+      <Header onReset={onReset} onSave={onSave} onPdf={onPdf} />
       <main className="layout-content">{children}</main>
     </div>
   );
