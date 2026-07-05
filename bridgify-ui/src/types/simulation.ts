@@ -40,3 +40,23 @@ export interface SimulationResponse {
   yearlyResults: YearlyResultResponse[];
   assetComparisonText?: string;
 }
+
+// ===== 실현손익 정산 (배당 포함) =====
+export interface RealizedAssetResult {
+  ticker: string;
+  shares: number;
+  costBasisKrw: number;
+  currentValueKrw: number;
+  capitalGainKrw: number;
+  dividendKrw: number;
+}
+
+export interface RealizedProfitResponse {
+  assets: RealizedAssetResult[];
+  totalCostKrw: number;
+  totalCurrentValueKrw: number;
+  totalCapitalGainKrw: number;
+  totalDividendKrw: number;
+  capitalGainsTaxKrw: number;
+  netRealizedProfitKrw: number;
+}

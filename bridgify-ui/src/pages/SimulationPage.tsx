@@ -14,7 +14,7 @@ import { GoodsComparisonCard } from "../components/simulation/GoodsComparison";
 import { TaxPieChart } from "../components/simulation/TaxPieChart";
 
 import { formatKoreanCurrency } from "../utils/format";
-
+import { RealizedProfitSection } from "../components/simulation/RealizedProfitSection";
 import "../styles/dashboard.css";
 
 export default function SimulationPage() {
@@ -118,6 +118,7 @@ export default function SimulationPage() {
 
         {/* 중앙 결과 패널 */}
         <main className="panel center-panel">
+          <RealizedProfitSection />
           {result ? (
             <div className="report-stack">
               <Card title="2. 자산 구매력 환산 리포트" variant="blue">
