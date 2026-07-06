@@ -58,5 +58,6 @@ export interface RealizedProfitResponse {
   totalCapitalGainKrw: number;
   totalDividendKrw: number;
   capitalGainsTaxKrw: number;
+  dividendTaxKrw: number;
   netRealizedProfitKrw: number;
 }

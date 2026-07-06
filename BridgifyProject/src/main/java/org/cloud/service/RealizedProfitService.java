@@ -24,15 +24,6 @@ import lombok.RequiredArgsConstructor;
  *
  * "과거에 이 종목을 이 가격/날짜에 샀는데, 지금 팔면 세금·배당 다 반영해서
  *  손에 쥐는 순수익이 얼마인가?"를 계산한다.
- *
- * 조립하는 부품:
- *   - 보유 주식수 : assets(비중·매수가·매수환율)로 역산
- *   - 시세차익   : 현재가(MarketDataService) − 매수가
- *   - 배당       : 매수연도~올해까지 실제 배당(DividendCalculator, 배당세 15.4% 포함)
- *   - 양도세     : TaxCalculator (250만 공제 후 세율)
- *
- * ※ v1 단순화: 배당 재투자(DRIP)와 연도별 환율은 아직 반영하지 않는다.
- *   (DRIP는 '연도별 과거 주가'가 필요 → price_history 테이블 추가 시 켤 수 있음)
  */
 @Service
 @RequiredArgsConstructor
@@ -51,6 +42,7 @@ public class RealizedProfitService {
         BigDecimal totalCurrentValue = BigDecimal.ZERO;
         BigDecimal totalCapitalGain = BigDecimal.ZERO;
         BigDecimal totalDividend = BigDecimal.ZERO;
+        BigDecimal totalDividendTax = BigDecimal.ZERO;   // 배당소득세 누적
 
         BigDecimal initialAmount = (request.getInitialAmount() != null)
                 ? request.getInitialAmount() : BigDecimal.ZERO;
@@ -95,12 +87,11 @@ public class RealizedProfitService {
                     currentValueKrw = shares.multiply(currentPriceUsd).multiply(currentRate)
                             .setScale(0, RoundingMode.HALF_UP);
                 } else {
-                    // 현재가 조회 실패 시 시세차익 0 처리 (원금 = 현재평가)
                     currentValueKrw = costBasisKrw;
                 }
                 BigDecimal capitalGainKrw = currentValueKrw.subtract(costBasisKrw);
 
-                // 5) 매수연도 ~ 올해까지 실제 배당 합산 (배당세 15.4%는 계산기 내부에서 처리)
+                // 5) 매수연도 ~ 올해까지 실제 배당 + 배당세 합산
                 BigDecimal dividendKrw = BigDecimal.ZERO;
                 int startYear = asset.getPurchaseDate().getYear();
                 int endYear = LocalDate.now().getYear();
@@ -112,6 +103,7 @@ public class RealizedProfitService {
                     DividendResult r = dividendCalculator.calculateYearlyDividend(
                             holdings, y, currentRate, null, false); // v1: 재투자(DRIP) off
                     dividendKrw = dividendKrw.add(r.getAfterTaxDividendKrw());
+                    totalDividendTax = totalDividendTax.add(r.getDividendTaxKrw());
                     holdings = r.getUpdatedHoldings();
                 }
 
@@ -147,6 +139,7 @@ public class RealizedProfitService {
                 .totalCapitalGainKrw(totalCapitalGain)
                 .totalDividendKrw(totalDividend)
                 .capitalGainsTaxKrw(capitalGainsTax)
+                .dividendTaxKrw(totalDividendTax)
                 .netRealizedProfitKrw(netRealizedProfit)
                 .build();
     }

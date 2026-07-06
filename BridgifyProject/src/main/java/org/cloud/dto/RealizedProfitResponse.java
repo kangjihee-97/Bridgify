@@ -20,5 +20,6 @@ public class RealizedProfitResponse {
     private BigDecimal totalCapitalGainKrw;     // 총 시세차익
     private BigDecimal totalDividendKrw;        // 총 세후 배당
     private BigDecimal capitalGainsTaxKrw;      // 양도소득세 (250만 공제 후)
+    private BigDecimal dividendTaxKrw;          // 배당소득세 (15.4%)
     private BigDecimal netRealizedProfitKrw;    // 순 실현손익 = 시세차익 + 배당 − 양도세
 }

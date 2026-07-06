@@ -6,6 +6,7 @@ import Card from "../ui/Card";
 import { Button } from "../ui/Button";
 import { StatBox } from "../ui/StatBox";
 import { formatKoreanCurrency } from "../../utils/format";
+import { RealizedTaxDonut } from "./RealizedTaxDonut";
 
 export function RealizedProfitSection() {
   const { form, assets } = useSimulationStore();
@@ -64,7 +65,7 @@ export function RealizedProfitSection() {
             title="순 실현손익"
             value={formatKoreanCurrency(result.netRealizedProfitKrw)}
             variant="green"
-            subValue="시세차익 + 배당 − 양도세"
+            subValue="시세차익 + 배당 − 세금"
           />
 
           <div className="summary-list-content" style={{ marginTop: 12 }}>
@@ -98,6 +99,30 @@ export function RealizedProfitSection() {
                 -{formatKoreanCurrency(result.capitalGainsTaxKrw)}
               </span>
             </div>
+            <div className="summary-item">
+              <span className="summary-label">배당소득세</span>
+              <span className="summary-value negative">
+                -{formatKoreanCurrency(result.dividendTaxKrw)}
+              </span>
+            </div>
+          </div>
+
+          {/* 세금 구성 도넛 (양도세 + 배당세) */}
+          <div style={{ marginTop: 18 }}>
+            <div
+              style={{
+                fontSize: 12,
+                fontWeight: 700,
+                color: "#555",
+                marginBottom: 6,
+              }}
+            >
+              세금 구성
+            </div>
+            <RealizedTaxDonut
+              capitalGainsTaxKrw={result.capitalGainsTaxKrw}
+              dividendTaxKrw={result.dividendTaxKrw}
+            />
           </div>
 
           {result.assets.length > 0 && (

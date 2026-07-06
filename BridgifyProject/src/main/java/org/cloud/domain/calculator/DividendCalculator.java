@@ -20,7 +20,7 @@ public class DividendCalculator {
     private final DividendHistoryMapper dividendHistoryMapper;
 
     /**
-     * 한 해 동안 보유 종목에서 발생한 세후 배당(원화) 합계를 계산한다.
+     * 한 해 동안 보유 종목에서 발생한 세후 배당(원화) 합계와 배당소득세(원화)를 계산한다.
      * reinvest=true면 세후 배당(USD)으로 같은 종목을 그 해 주가에 재매수(DRIP)해 보유 주식수를 늘린다.
      *
      * @param holdings   종목별 보유 주식수 (연도 시작 시점) : ticker -> 주식수
@@ -28,7 +28,7 @@ public class DividendCalculator {
      * @param usdKrwRate 해당 연도 USD -> KRW 환율
      * @param prices     종목별 해당 연도 주가(USD) : ticker -> 주가 (재투자 계산용, 없으면 재투자 생략)
      * @param reinvest   배당 재투자(DRIP) 여부
-     * @return 세후 배당(원화) 합계 + 재투자 반영된 보유 주식수
+     * @return 세후 배당(원화) + 배당세(원화) + 재투자 반영된 보유 주식수
      */
     public DividendResult calculateYearlyDividend(
             Map<String, BigDecimal> holdings,
@@ -38,6 +38,7 @@ public class DividendCalculator {
             boolean reinvest
     ) {
         BigDecimal totalAfterTaxKrw = BigDecimal.ZERO;
+        BigDecimal totalTaxKrw = BigDecimal.ZERO;
         Map<String, BigDecimal> updatedHoldings = new HashMap<>(holdings);
 
         for (Map.Entry<String, BigDecimal> entry : holdings.entrySet()) {
@@ -57,15 +58,17 @@ public class DividendCalculator {
             // 세전 배당(USD) = 보유주식수 × 주당배당금
             BigDecimal grossUsd = shares.multiply(dps);
 
-            // 배당소득세 15.4% 차감 → 세후 배당(USD)
-            BigDecimal afterTaxUsd = grossUsd.multiply(BigDecimal.ONE.subtract(DIVIDEND_TAX_RATE));
+            // 배당소득세(USD) = 세전 배당 × 15.4%
+            BigDecimal taxUsd = grossUsd.multiply(DIVIDEND_TAX_RATE);
+            // 세후 배당(USD) = 세전 − 세금
+            BigDecimal afterTaxUsd = grossUsd.subtract(taxUsd);
 
             // 원화 환산 (그 해 환율)
-            BigDecimal afterTaxKrw = afterTaxUsd
-                    .multiply(usdKrwRate)
-                    .setScale(0, RoundingMode.HALF_UP);
+            BigDecimal afterTaxKrw = afterTaxUsd.multiply(usdKrwRate).setScale(0, RoundingMode.HALF_UP);
+            BigDecimal taxKrw = taxUsd.multiply(usdKrwRate).setScale(0, RoundingMode.HALF_UP);
 
             totalAfterTaxKrw = totalAfterTaxKrw.add(afterTaxKrw);
+            totalTaxKrw = totalTaxKrw.add(taxKrw);
 
             // 배당 재투자(DRIP): 세후 배당(USD)으로 그 해 주가에 추가 매수
             if (reinvest && prices != null) {
@@ -77,6 +80,6 @@ public class DividendCalculator {
             }
         }
 
-        return new DividendResult(totalAfterTaxKrw, updatedHoldings);
+        return new DividendResult(totalAfterTaxKrw, totalTaxKrw, updatedHoldings);
     }
 }
