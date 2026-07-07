@@ -20,5 +20,6 @@ public class SimulationRequest {
     private BigDecimal taxRate;
     private BigDecimal expectedReturn;
     private List<AssetAllocation> assets;
+    private Boolean reinvest;
 
 }

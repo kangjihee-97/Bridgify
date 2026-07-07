@@ -15,6 +15,7 @@ export interface SimulationRequest {
   taxRate: number;
   expectedReturn?: number;
   assets: AssetAllocation[];
+  reinvest?: boolean;
 }
 
 export interface YearlyResultResponse {

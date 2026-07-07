@@ -52,6 +52,9 @@ public class RealizedProfitService {
 
         BigDecimal currentRate = exchangeRateService.fetchUsdToKrwRate();
 
+        // 배당 재투자(DRIP) 여부 — 값이 없으면 기본 ON(true)
+        boolean reinvest = (request.getReinvest() == null) || request.getReinvest();
+
         if (request.getAssets() != null) {
             for (AssetAllocation asset : request.getAssets()) {
 
@@ -98,7 +101,7 @@ public class RealizedProfitService {
                     }
 
                     DividendResult r = dividendCalculator.calculateYearlyDividend(
-                            holdings, y, currentRate, prices, true); // 재투자(DRIP) ON
+                            holdings, y, currentRate, prices, reinvest); // 재투자(DRIP) 여부는 요청값
 
                     dividendKrw = dividendKrw.add(r.getAfterTaxDividendKrw());
                     totalDividendTax = totalDividendTax.add(r.getDividendTaxKrw());
