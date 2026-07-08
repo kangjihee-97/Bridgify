@@ -11,4 +11,16 @@
           AND `year` = #{year}
     </select>
 
+    <select id="countByTicker" resultType="int">
+        SELECT COUNT(*)
+        FROM price_history
+        WHERE ticker = #{ticker}
+    </select>
+
+    <insert id="upsert">
+        INSERT INTO price_history (ticker, `year`, price)
+        VALUES (#{ticker}, #{year}, #{price})
+        ON DUPLICATE KEY UPDATE price = VALUES(price)
+    </insert>
+
 </mapper>

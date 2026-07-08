@@ -8,14 +8,21 @@
         SELECT dps
         FROM dividend_history
         WHERE ticker = #{ticker}
-          AND year = #{year}
+          AND `year` = #{year}
     </select>
 
     <select id="findByTicker" resultType="org.cloud.domain.entity.DividendHistory">
         SELECT *
         FROM dividend_history
         WHERE ticker = #{ticker}
-        ORDER BY year
+        ORDER BY `year`
     </select>
+
+    <!-- 같은 (ticker, year)가 이미 있으면 dps만 갱신 (UNIQUE KEY 활용) -->
+    <insert id="upsert">
+        INSERT INTO dividend_history (ticker, `year`, dps)
+        VALUES (#{ticker}, #{year}, #{dps})
+        ON DUPLICATE KEY UPDATE dps = VALUES(dps)
+    </insert>
 
 </mapper>

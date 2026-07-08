@@ -36,6 +36,7 @@ public class RealizedProfitService {
     private final DividendCalculator dividendCalculator;
     private final TaxCalculator taxCalculator;
     private final PriceHistoryMapper priceHistoryMapper;
+    private final DividendDataService dividendDataService;
 
     public RealizedProfitResponse calculate(SimulationRequest request) {
 
@@ -64,6 +65,9 @@ public class RealizedProfitService {
                         || asset.getRatio() == null) {
                     continue;
                 }
+
+                // 0) 배당·주가 데이터가 DB에 없으면 Alpha Vantage에서 받아와 캐싱
+                dividendDataService.ensureDividendData(asset.getTicker());
 
                 // 1) 매수 시점 환율
                 BigDecimal purchaseRate = (asset.getPurchaseRate() != null)
