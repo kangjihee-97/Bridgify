@@ -7,6 +7,7 @@ import type {
 
 const BASE_URL = "http://localhost:8080/api/simulation";
 const REALIZED_URL = "http://localhost:8080/api/realized-profit";
+const INFLATION_URL = "http://localhost:8080/api/inflation";
 
 export const runSimulationApi = async (
   request: SimulationRequest,
@@ -22,5 +23,14 @@ export const runRealizedProfitApi = async (
 ): Promise<RealizedProfitResponse> => {
   const res = await axios.post<RealizedProfitResponse>(REALIZED_URL, request);
 
+  return res.data;
+};
+
+// 실시간 물가상승률 조회 (미국 FRED + 한국 ECOS)
+export const fetchInflationRates = async (): Promise<{
+  usInflationRate: number;
+  krInflationRate: number;
+}> => {
+  const res = await axios.get(`${INFLATION_URL}/all`);
   return res.data;
 };

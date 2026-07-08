@@ -1,5 +1,6 @@
 import React from "react";
 import { useSimulationStore } from "../../store/simulationStore";
+import { InflationHint } from "./InflationHint";
 
 const parseNumber = (value: string) => {
   // 콤마 제거 및 공백 제거
@@ -129,6 +130,7 @@ export const SimulationSettingsForm = () => {
               />
               <span className="input-unit">%</span>
             </div>
+            <InflationHint />
           </div>
 
           <div className="input-field">
