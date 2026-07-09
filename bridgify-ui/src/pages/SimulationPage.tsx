@@ -11,7 +11,7 @@ import { AssetAllocationForm } from "../components/simulation/SimulationForm";
 import { SimulationSettingsForm } from "../components/simulation/SettingsForm";
 import { SimulationResultSection } from "../components/simulation/SimulationResultSection";
 import { GoodsComparisonCard } from "../components/simulation/GoodsComparison";
-import { TaxPieChart } from "../components/simulation/TaxPieChart";
+
 import { TaxBar } from "../components/simulation/TaxBar";
 
 import { formatKoreanCurrency } from "../utils/format";
@@ -19,8 +19,14 @@ import { RealizedProfitSection } from "../components/simulation/RealizedProfitSe
 import "../styles/dashboard.css";
 
 export default function SimulationPage() {
-  const { result, form, assets, setResult, setAssets, setForm } =
-    useSimulationStore();
+  // 스토어를 통째로 구조분해하면 어떤 상태가 바뀌어도 이 페이지(=모든 자식)가 리렌더된다.
+  // 필요한 값만 개별 선택 구독해서, 타이핑할 때 차트까지 다시 그리는 일을 막는다.
+  const result = useSimulationStore((s) => s.result);
+  const form = useSimulationStore((s) => s.form);
+  const assets = useSimulationStore((s) => s.assets);
+  const setResult = useSimulationStore((s) => s.setResult);
+  const setAssets = useSimulationStore((s) => s.setAssets);
+  const setForm = useSimulationStore((s) => s.setForm);
 
   const [isCalculating, setIsCalculating] = useState(false);
   const [toast, setToast] = useState<string | null>(null);

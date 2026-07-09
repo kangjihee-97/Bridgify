@@ -9,7 +9,9 @@ import { formatKoreanCurrency } from "../../utils/format";
 import { RealizedTaxDonut } from "./RealizedTaxDonut";
 
 export function RealizedProfitSection() {
-  const { form, assets } = useSimulationStore();
+  // 필요한 상태만 선택 구독
+  const form = useSimulationStore((s) => s.form);
+  const assets = useSimulationStore((s) => s.assets);
   const [result, setResult] = useState<RealizedProfitResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [reinvest, setReinvest] = useState(true); // 배당 재투자(DRIP) 기본 ON

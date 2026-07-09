@@ -4,7 +4,9 @@ import type { AssetAllocation } from "../../types/simulation";
 type AssetFieldValue = string | number | null;
 
 export const AssetAllocationForm = () => {
-  const { assets, setAssets } = useSimulationStore();
+  // 필요한 상태만 선택 구독 → 다른 상태(form/result)가 바뀌어도 리렌더되지 않음
+  const assets = useSimulationStore((s) => s.assets);
+  const setAssets = useSimulationStore((s) => s.setAssets);
 
   const handleAssetChange = (
     index: number,
@@ -74,7 +76,7 @@ export const AssetAllocationForm = () => {
 
       <div className="asset-list">
         {assets.map((a, i) => (
-          <div key={`${a.ticker}-${i}`} className="asset-row">
+          <div key={i} className="asset-row">
             <div className="ticker-avatar" aria-hidden="true">
               {a.ticker ? a.ticker.charAt(0) : "?"}
             </div>

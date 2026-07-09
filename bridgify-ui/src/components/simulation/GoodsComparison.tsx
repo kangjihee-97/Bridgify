@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { SimulationResponse } from "../../types/simulation";
 import { COMPARISON_ITEMS } from "../../constants/goods";
 // 1. formatKoreanCurrency 임포트 추가
@@ -8,7 +9,7 @@ interface Props {
   result: SimulationResponse;
 }
 
-export const GoodsComparisonCard = ({ result }: Props) => {
+const GoodsComparisonCardBase = ({ result }: Props) => {
   if (!result) return null;
 
   const realBalance = result.realBalanceKrw ?? 0;
@@ -60,3 +61,7 @@ export const GoodsComparisonCard = ({ result }: Props) => {
     </Card>
   );
 };
+
+// 부모(SimulationPage)가 리렌더돼도 props가 같으면 다시 그리지 않는다.
+// → 종목 입력창에 타이핑할 때 차트가 매번 재렌더되는 문제를 막는다.
+export const GoodsComparisonCard = memo(GoodsComparisonCardBase);

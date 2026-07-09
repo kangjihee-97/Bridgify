@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import { PortfolioGrowthChart } from "./GrowthChart";
 import { formatKoreanCurrency } from "../../utils/format";
 import type {
@@ -11,7 +11,7 @@ interface Props {
   request: SimulationRequest;
 }
 
-export const SimulationResultSection = ({ results, request }: Props) => {
+const SimulationResultSectionBase = ({ results, request }: Props) => {
   if (!results || results.length === 0) return null;
 
   const lastResult = results[results.length - 1];
@@ -81,3 +81,7 @@ export const SimulationResultSection = ({ results, request }: Props) => {
     </div>
   );
 };
+
+// 부모(SimulationPage)가 리렌더돼도 props가 같으면 다시 그리지 않는다.
+// → 종목 입력창에 타이핑할 때 차트가 매번 재렌더되는 문제를 막는다.
+export const SimulationResultSection = memo(SimulationResultSectionBase);

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { SimulationResponse } from "../../types/simulation";
 import { formatKoreanCurrency } from "../../utils/format";
 
@@ -6,7 +7,7 @@ interface Props {
 }
 
 // 미래 시뮬 결과를 "원금 / 순수익 / 세금" 누적 비율 막대로 보여준다.
-export const TaxBar = ({ result }: Props) => {
+const TaxBarBase = ({ result }: Props) => {
   const totalBalance = Math.max(0, result.nominalBalanceKrw || 0);
   const profit = Math.max(0, result.totalProfit || 0);
   const tax = Math.max(0, result.tax || 0);
@@ -95,3 +96,7 @@ export const TaxBar = ({ result }: Props) => {
     </div>
   );
 };
+
+// 부모(SimulationPage)가 리렌더돼도 props가 같으면 다시 그리지 않는다.
+// → 종목 입력창에 타이핑할 때 차트가 매번 재렌더되는 문제를 막는다.
+export const TaxBar = memo(TaxBarBase);

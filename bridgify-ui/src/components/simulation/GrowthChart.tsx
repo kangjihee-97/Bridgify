@@ -1,3 +1,4 @@
+import { memo } from "react";
 import {
   AreaChart,
   Area,
@@ -15,7 +16,7 @@ interface Props {
   data: YearlyResultResponse[];
 }
 
-export const PortfolioGrowthChart = ({ data }: Props) => {
+const PortfolioGrowthChartBase = ({ data }: Props) => {
   if (!data || data.length === 0) return null;
 
   // Y축·라벨 공통 포맷 — 단위를 "억"으로 통일해서 깔끔하게
@@ -102,7 +103,7 @@ export const PortfolioGrowthChart = ({ data }: Props) => {
           />
 
           <Tooltip
-            formatter={(value: number) => [`${value.toLocaleString()}원`]}
+            formatter={(value) => [`${Number(value).toLocaleString()}원`]}
             labelFormatter={(label) =>
               label === 0 || label === "현재" ? "현재" : `${label}년차`
             }
@@ -151,3 +152,7 @@ export const PortfolioGrowthChart = ({ data }: Props) => {
     </div>
   );
 };
+
+// 부모(SimulationPage)가 리렌더돼도 props가 같으면 다시 그리지 않는다.
+// → 종목 입력창에 타이핑할 때 차트가 매번 재렌더되는 문제를 막는다.
+export const PortfolioGrowthChart = memo(PortfolioGrowthChartBase);

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { formatKoreanCurrency } from "../../utils/format";
 
@@ -6,7 +7,7 @@ interface Props {
   dividendTaxKrw: number;
 }
 
-export const RealizedTaxDonut = ({
+const RealizedTaxDonutBase = ({
   capitalGainsTaxKrw,
   dividendTaxKrw,
 }: Props) => {
@@ -119,3 +120,7 @@ export const RealizedTaxDonut = ({
     </div>
   );
 };
+
+// 부모(SimulationPage)가 리렌더돼도 props가 같으면 다시 그리지 않는다.
+// → 종목 입력창에 타이핑할 때 차트가 매번 재렌더되는 문제를 막는다.
+export const RealizedTaxDonut = memo(RealizedTaxDonutBase);

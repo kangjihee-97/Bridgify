@@ -10,7 +10,9 @@ const parseNumber = (value: string) => {
 };
 
 export const SimulationSettingsForm = () => {
-  const { form, setForm } = useSimulationStore();
+  // 필요한 상태만 선택 구독
+  const form = useSimulationStore((s) => s.form);
+  const setForm = useSimulationStore((s) => s.setForm);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

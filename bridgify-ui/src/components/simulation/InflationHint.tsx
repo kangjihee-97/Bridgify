@@ -3,22 +3,36 @@ import { fetchInflationRates } from "../../api/simulationApi";
 import { useSimulationStore } from "../../store/simulationStore";
 
 /**
- * 물가 상승률 입력칸 밑에 실시간 물가(미국·한국)를 보여주고,
- * 클릭하면 해당 값을 물가 입력칸(krInflationRate)에 자동으로 채워준다.
+ * 실시간 물가 자동 반영 + 반영 경로 안내.
+ *
+ * - 한국 물가: 최종 원화의 "구매력"을 깎는 데 직접 사용 → 입력칸에 자동 채움
+ * - 미국 물가: 이미 주가(기업 실적)와 환율(물가 차이)에 반영되어 있음 → 참고 표시
  */
 export const InflationHint = () => {
-  const { setForm } = useSimulationStore();
+  // setForm만 선택 구독 — form 값을 구독하면 입력할 때마다 이 컴포넌트도 리렌더된다.
+  const setForm = useSimulationStore((s) => s.setForm);
+
   const [rates, setRates] = useState<{
     usInflationRate: number;
     krInflationRate: number;
   } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showInfo, setShowInfo] = useState(false);
 
   useEffect(() => {
     fetchInflationRates()
-      .then(setRates)
+      .then((data) => {
+        setRates(data);
+        // 마운트 시 한국 물가를 자동으로 채움 ("원딸깍")
+        // getState()로 현재값만 읽는다 → 구독하지 않으므로 리렌더 유발 없음
+        const current = useSimulationStore.getState().form.krInflationRate;
+        if (!current || current === 0) {
+          setForm("krInflationRate" as any, data.krInflationRate);
+        }
+      })
       .catch((e) => console.error("물가 조회 실패:", e))
       .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
@@ -31,35 +45,92 @@ export const InflationHint = () => {
 
   if (!rates) return null;
 
-  const chip = (label: string, value: number, color: string) => (
-    <button
-      type="button"
-      onClick={() => setForm("krInflationRate" as any, value)}
+  const row = (
+    flag: string,
+    name: string,
+    rate: number,
+    note: string,
+    withInfo = false,
+  ) => (
+    <div
       style={{
-        border: `1px solid ${color}`,
-        background: "transparent",
-        color,
-        borderRadius: 999,
-        padding: "3px 10px",
+        display: "flex",
+        alignItems: "center",
+        gap: 4,
+        whiteSpace: "nowrap",
         fontSize: 11,
-        fontWeight: 600,
-        cursor: "pointer",
+        lineHeight: 1.9,
       }}
-      title="클릭하면 물가 상승률에 적용됩니다"
     >
-      {label} {value}%
-    </button>
+      <span>{flag}</span>
+      <span style={{ color: "#6b6b6b" }}>{name}</span>
+      <strong style={{ color: "#4b3fa3" }}>{rate}%</strong>
+      <span style={{ color: "#a8a4bd", fontSize: 10 }}>{note}</span>
+      {withInfo && (
+        <button
+          type="button"
+          onClick={() => setShowInfo((v) => !v)}
+          style={{
+            border: "none",
+            background: "transparent",
+            color: "#a855f7",
+            cursor: "pointer",
+            fontSize: 11,
+            padding: 0,
+            lineHeight: 1,
+          }}
+          title="미국 물가는 어디에 반영되나요?"
+        >
+          ⓘ
+        </button>
+      )}
+    </div>
   );
 
   return (
     <div style={{ marginTop: 6 }}>
-      <div style={{ fontSize: 10, color: "#9aa0b0", marginBottom: 4 }}>
-        실시간 물가 (클릭해 적용)
+      <div
+        style={{
+          fontSize: 10,
+          color: "#6366f1",
+          fontWeight: 600,
+          marginBottom: 2,
+        }}
+      >
+        ✓ 실시간 물가 자동 반영됨
       </div>
-      <div style={{ display: "flex", gap: 6 }}>
-        {chip("🇰🇷 한국", rates.krInflationRate, "#6366f1")}
-        {chip("🇺🇸 미국", rates.usInflationRate, "#a855f7")}
-      </div>
+
+      {row("🇰🇷", "한국", rates.krInflationRate, "적용")}
+      {row("🇺🇸", "미국", rates.usInflationRate, "주가·환율 반영", true)}
+
+      {showInfo && (
+        <div
+          style={{
+            marginTop: 6,
+            padding: "8px 10px",
+            background: "#f7f6fe",
+            border: "1px solid #e5e0fa",
+            borderRadius: 8,
+            fontSize: 11,
+            color: "#5b5570",
+            lineHeight: 1.7,
+          }}
+        >
+          <strong>미국 물가는 어디에 반영되나요?</strong>
+          <div style={{ marginTop: 4 }}>
+            • <strong>주가</strong> — 미국 물가가 오르면 기업 매출·이익도 올라
+            주가(수익률)에 이미 포함됩니다.
+          </div>
+          <div>
+            • <strong>환율</strong> — 미국·한국의 물가 차이는 장기적으로 원/달러
+            환율에 반영됩니다.
+          </div>
+          <div style={{ marginTop: 4 }}>
+            그래서 최종 원화 금액에는 <strong>한국 물가</strong>만 나눠 구매력을
+            계산합니다. (미국 물가를 또 빼면 이중 차감)
+          </div>
+        </div>
+      )}
     </div>
   );
 };
