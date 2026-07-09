@@ -16,6 +16,8 @@ import { TaxBar } from "../components/simulation/TaxBar";
 
 import { formatKoreanCurrency } from "../utils/format";
 import { RealizedProfitSection } from "../components/simulation/RealizedProfitSection";
+import { AiSummaryCard } from "../components/simulation/AiSummaryCard";
+import { InflationBadge } from "../components/simulation/InflationBadge";
 import "../styles/dashboard.css";
 
 export default function SimulationPage() {
@@ -157,47 +159,14 @@ export default function SimulationPage() {
                   의 가치를 가집니다.
                 </p>
 
+                {/* 미국·한국 물가가 각각 어디에 반영됐는지 표시 */}
+                <InflationBadge />
+
                 <GoodsComparisonCard result={result} />
               </Card>
 
-              <Card title="요약 수치">
-                <div className="result-summary-grid">
-                  <div className="result-summary-item">
-                    <span className="result-summary-label">총 투자 원금</span>
-                    <span className="result-summary-value">
-                      {formatKoreanCurrency(result.totalPrincipal)}
-                    </span>
-                  </div>
-                  <div className="result-summary-item">
-                    <span className="result-summary-label">
-                      총 투자 수익(명목)
-                    </span>
-                    <span className="result-summary-value nominal">
-                      {formatKoreanCurrency(result.totalProfit)}
-                    </span>
-                  </div>
-                  <div className="result-summary-item">
-                    <span className="result-summary-label">최종 명목 자산</span>
-                    <span className="result-summary-value nominal">
-                      {formatKoreanCurrency(result.nominalBalanceKrw)}
-                    </span>
-                  </div>
-                  <div className="result-summary-item">
-                    <span className="result-summary-label">
-                      실질 구매력 가치
-                    </span>
-                    <span className="result-summary-value real">
-                      {formatKoreanCurrency(result.realBalanceKrw)}
-                    </span>
-                  </div>
-                  <div className="result-summary-item">
-                    <span className="result-summary-label">연평균 수익률</span>
-                    <span className="result-summary-value nominal">
-                      {result.returnRate}%
-                    </span>
-                  </div>
-                </div>
-              </Card>
+              {/* AI 결과 해설 — 명목 vs 실질 숫자를 본 직후 해설을 읽도록 배치 */}
+              <AiSummaryCard result={result} />
 
               <Card title="자산 성장 추이 추정">
                 <SimulationResultSection
@@ -253,6 +222,30 @@ export default function SimulationPage() {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+
+                {/* 투자 성과 요약 — 위 카드와 중복되는 명목/실질 자산은 제외 */}
+                <Card title="투자 성과 요약">
+                  <div className="summary-list-content">
+                    <div className="summary-item">
+                      <span className="summary-label">총 투자 원금</span>
+                      <span className="summary-value">
+                        {formatKoreanCurrency(result.totalPrincipal)}
+                      </span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-label">총 투자 수익(명목)</span>
+                      <span className="summary-value nominal">
+                        {formatKoreanCurrency(result.totalProfit)}
+                      </span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-label">연평균 수익률</span>
+                      <span className="summary-value nominal">
+                        {result.returnRate}%
                       </span>
                     </div>
                   </div>

@@ -23,12 +23,10 @@ export const InflationHint = () => {
     fetchInflationRates()
       .then((data) => {
         setRates(data);
-        // 마운트 시 한국 물가를 자동으로 채움 ("원딸깍")
-        // getState()로 현재값만 읽는다 → 구독하지 않으므로 리렌더 유발 없음
-        const current = useSimulationStore.getState().form.krInflationRate;
-        if (!current || current === 0) {
-          setForm("krInflationRate" as any, data.krInflationRate);
-        }
+        // 마운트 시 한국 물가를 무조건 자동으로 채운다 ("원딸깍").
+        // 이 훅은 마운트 때 1회만 실행되므로, 이후 사용자가 직접 수정한 값은 덮어쓰지 않는다.
+        // (스토어 초기값 3은 API 실패 시의 폴백 역할만 한다)
+        setForm("krInflationRate" as any, data.krInflationRate);
       })
       .catch((e) => console.error("물가 조회 실패:", e))
       .finally(() => setLoading(false));
