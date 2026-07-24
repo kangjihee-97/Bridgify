@@ -12,6 +12,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.RequiredArgsConstructor;
@@ -38,31 +40,66 @@ public class AiSummaryService {
     private static final String GEMINI_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent";
 
+    private static final int MAX_RETRY = 1;          // 503 발생 시 재시도 횟수
+    private static final long RETRY_DELAY_MS = 2000L; // 재시도 전 대기 시간
+
     public String summarize(AiSummaryRequest req) {
 
         String prompt = buildPrompt(req);
 
+        for (int attempt = 0; attempt <= MAX_RETRY; attempt++) {
+            try {
+                return callGemini(prompt);
+
+            } catch (HttpServerErrorException e) {
+                // 503 등 서버 측 일시적 오류 — 잠시 후 재시도하면 대개 성공한다
+                if (attempt < MAX_RETRY) {
+                    log.warn("Gemini 일시적 오류({}), {}ms 후 재시도합니다.",
+                            e.getStatusCode(), RETRY_DELAY_MS);
+                    sleep(RETRY_DELAY_MS);
+                    continue;
+                }
+                log.warn("Gemini 재시도 후에도 실패: {}", e.getMessage());
+                return "AI 서버가 혼잡합니다. 잠시 후 다시 시도해 주세요.";
+
+            } catch (HttpClientErrorException.TooManyRequests e) {
+                // 429 — 할당량 초과. 재시도해도 소용없으므로 즉시 안내한다.
+                log.warn("Gemini 호출 한도 초과: {}", e.getMessage());
+                return "오늘 사용 가능한 AI 분석 횟수를 모두 사용했습니다. 내일 다시 이용해 주세요.";
+
+            } catch (Exception e) {
+                log.warn("Gemini 요약 실패: {}", e.getMessage());
+                return "AI 해설을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
+            }
+        }
+        return "AI 해설을 불러오지 못했습니다.";
+    }
+
+    /** Gemini API 호출 (예외는 호출부에서 상태코드별로 처리) */
+    private String callGemini(String prompt) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("x-goog-api-key", geminiApiKey);
+
+        Map<String, Object> body = Map.of(
+                "contents", List.of(
+                        Map.of("parts", List.of(Map.of("text", prompt)))
+                )
+        );
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> resp = restTemplate.postForObject(GEMINI_URL, entity, Map.class);
+
+        return extractText(resp);
+    }
+
+    private void sleep(long ms) {
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("x-goog-api-key", geminiApiKey);
-
-            Map<String, Object> body = Map.of(
-                    "contents", List.of(
-                            Map.of("parts", List.of(Map.of("text", prompt)))
-                    )
-            );
-
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-
-            @SuppressWarnings("unchecked")
-            Map<String, Object> resp = restTemplate.postForObject(GEMINI_URL, entity, Map.class);
-
-            return extractText(resp);
-
-        } catch (Exception e) {
-            log.warn("Gemini 요약 실패: {}", e.getMessage());
-            return "AI 해설을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
+            Thread.sleep(ms);
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
         }
     }
 
